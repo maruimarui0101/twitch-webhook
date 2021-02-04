@@ -37,14 +37,15 @@ def make_sub(access_token):
         "transport": {
             "method": "webhook",
             "callback": f"{os.getenv('TUNNEL_URL')}",
-            "secret": "s3cRe7"
+            "secret": "s3cRe7s3cRe7"
         }
     }
 
     headers = {"Client-ID": f"{os.getenv('TWITCH_CLIENT_ID')}",
-    "Authorization": f"Bearer {access_token}"}
+    "Authorization": f"Bearer {access_token}",
+    "Content-Type": "application/json"}
 
-    r = requests.post(SUB_ENDPOINT,headers=headers, data= payload)
+    r = requests.post(SUB_ENDPOINT,headers=headers, data= json.dumps(payload))
 
     print(r.json())
 
@@ -56,10 +57,8 @@ def get_subs(access_token):
     "Authorization": f"Bearer {access_token}"}
 
     r = requests.get(SUB_ENDPOINT,headers=headers)
-
+    print(r.json())
     return r.json()
 
-
-if __name__ == "__main__":
-    access_token = authenticate()
-    make_sub(access_token)
+access_token = authenticate()
+get_subs(access_token)

@@ -1,31 +1,18 @@
 # import flask dependencies
-from flask import Flask, request, make_response, jsonify
+from flask import Flask, request, make_response, jsonify, Response
 
 # initialize the flask app
 app = Flask(__name__)
 
+
 # default route
-@app.route('/')
+@app.route('/callback', methods=['POST'])
 def index():
-    return 'Hello World!'
+    print(request.json)
+    data = request.json['challenge']
+    print(data)
+    return make_response(data, 201)
 
-# function for responses
-def results():
-    # build a request object
-    req = request.get_json(force=True)
-
-    # fetch action from json
-    action = req.get('queryResult').get('action')
-
-    # return a fulfillment response
-    return {'fulfillmentText': 'This is a response from webhook.'}
-
-# create a route for webhook
-@app.route('/webhook', methods=['GET', 'POST'])
-def webhook():
-    # return response
-    return make_response(jsonify(results()))
-
-# run the app
 if __name__ == "__main__":
-    app.run()
+    # Flask must run on 443 and on HTTPS as per requirement from Twitch
+    app.run(ssl_context='adhoc', debug=True, port=443)
